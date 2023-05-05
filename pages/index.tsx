@@ -1,53 +1,35 @@
-import { ConnectWallet } from "@thirdweb-dev/react";
-import type { NextPage } from "next";
+import { Web3Button } from "@thirdweb-dev/react";
 import styles from "../styles/Home.module.css";
+import type { NextPage } from "next";
 
+/**
+ * On this page, we create a button that mints an NFT from the connected smart contract wallet.
+ * The user first connects their EOA Wallet, which is the signer of the smart contract wallet.
+ * Then, they click the "Mint An NFT" button, which calls the "mint" function on the smart contract.
+ *
+ * This triggers the UserOperation to be sent to the alt mempool, kicking off the EIP-4337 flow.
+ */
 const Home: NextPage = () => {
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="http://thirdweb.com/">thirdweb</a>!
-        </h1>
+      <h1 className={styles.title}>Account Abstraction</h1>
+      <p className={styles.desc}>Mint an NFT from a smart contract wallet</p>
 
-        <p className={styles.description}>
-          Get started by configuring your desired network in{" "}
-          <code className={styles.code}>pages/_app.tsx</code>, then modify the{" "}
-          <code className={styles.code}>pages/index.tsx</code> file!
-        </p>
-
-        <div className={styles.connect}>
-          <ConnectWallet />
-        </div>
-
-        <div className={styles.grid}>
-          <a href="https://portal.thirdweb.com/" className={styles.card}>
-            <h2>Portal &rarr;</h2>
-            <p>
-              Guides, references and resources that will help you build with
-              thirdweb.
-            </p>
-          </a>
-
-          <a href="https://thirdweb.com/dashboard" className={styles.card}>
-            <h2>Dashboard &rarr;</h2>
-            <p>
-              Deploy, configure and manage your smart contracts from the
-              dashboard.
-            </p>
-          </a>
-
-          <a
-            href="https://portal.thirdweb.com/templates"
-            className={styles.card}
-          >
-            <h2>Templates &rarr;</h2>
-            <p>
-              Discover and clone template projects showcasing thirdweb features.
-            </p>
-          </a>
-        </div>
-      </main>
+      {/* This button acts as a connect wallet button if one is not already connected. */}
+      <Web3Button
+        contractAddress="0x91B3Af7afd6B169121Dcce83d4d8377fD6E76285"
+        action={(contract) =>
+          // Call the "mintTo" function with the following metadata.
+          // Metadata is uploaded to IPFS and pinned before the transaction is sent.
+          contract.erc721.mint({
+            name: "NFT on my AA",
+            description: "This is an NFT on my AA",
+            image: "ipfs://Qmcny3J5yGpWjJsvR92DQAZcHYWLDep6GdgdKJTRxU1qyo",
+          })
+        }
+      >
+        Mint An NFT
+      </Web3Button>
     </div>
   );
 };
